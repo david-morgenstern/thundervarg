@@ -1,0 +1,5 @@
+fastapi
+sqlmodel
+uvicorn
+databases[sqlite]
+FastAPI-SQLAlchemy

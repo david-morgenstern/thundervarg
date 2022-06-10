@@ -1,0 +1,26 @@
+version: '3.7'
+
+services:
+
+  web:
+    container_name: thundervarg
+    build: .
+    command: bash -c "./run.sh"
+    volumes:
+      - .:/app
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+    restart: always
+
+  db:
+    container_name: postgresql_db
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=psuser
+      - POSTGRES_PASSWORD=pspassword
+      - POSTGRES_DB=psthundervarg
