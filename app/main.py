@@ -7,7 +7,7 @@ from .model import Todo, User
 from .schema import SchemaUser, SchemaTodo, SchemaTodoUpdate
 
 app = FastAPI()
-sql_url = os.getenv("DATABASE_URL")
+sql_url = os.getenv("DB_URL")
 
 # app.add_middleware(DBSessionMiddleware, db_url="sqlite:///database.db")
 app.add_middleware(DBSessionMiddleware, db_url=sql_url)
