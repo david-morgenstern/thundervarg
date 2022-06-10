@@ -7,10 +7,11 @@ from .model import Todo, User
 from .schema import SchemaUser, SchemaTodo, SchemaTodoUpdate
 
 app = FastAPI()
-sql_url = f"postgresql://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}@db:5432/{os.getenv('POSTGRES_DB')}"
+sql_url = os.getenv("DATABASE_URL")
 
 # app.add_middleware(DBSessionMiddleware, db_url="sqlite:///database.db")
 app.add_middleware(DBSessionMiddleware, db_url=sql_url)
+
 
 @app.get("/users/")
 def read_users():

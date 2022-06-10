@@ -5,7 +5,7 @@ import os
 
 # sqlite_file_name = "app/database.db"
 # sql_url = f"sqlite:///{sqlite_file_name}"
-sql_url = f"postgresql://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}@db:5432/{os.getenv('POSTGRES_DB')}"
+sql_url = os.getenv("DATABASE_URL")
 
 engine = create_engine(sql_url, echo=True)
 
