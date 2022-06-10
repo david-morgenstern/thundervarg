@@ -10,7 +10,7 @@ from app.authenticate import Token, authenticate_user, ACCESS_TOKEN_EXPIRE_MINUT
     get_password_hash
 from app.create_initial_test_db import engine, create_tables
 from app.model import Todo, User
-from app.schema import SchemaTodoUpdate
+from app.schema import SchemaTodoUpdate, SchemaTodo
 
 app = FastAPI()
 
@@ -64,6 +64,20 @@ def add_user(user: User):
     return new_user
 
 
+@app.delete("/users/{user_id}")
+def delete_user(user_id: int):
+    with db.session as sess:
+        user = sess.get(User, user_id)
+
+        if not user:
+            raise HTTPException(status_code=404, detail="Todo not found!")
+
+        sess.delete(user)
+        sess.commit()
+
+    return {"User deleted": user}
+
+
 @app.get("/todos/")
 def get_todos():
     with db.session as sess:
@@ -88,8 +102,8 @@ def get_todos_by_user(user_id: int):
     return todos
 
 
-@app.post("/todos/", response_model=Todo)
-def add_todo(todo: Todo):
+@app.post("/todos/", response_model=SchemaTodo)
+def add_todo(todo: SchemaTodo):
     with db.session as sess:
         sess.expire_on_commit = False
         new_todo = Todo(**todo.dict())

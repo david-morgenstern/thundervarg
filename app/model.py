@@ -21,4 +21,3 @@ class Todo(SQLModel, table=True):
     due_date: datetime = Field(default_factory=None, nullable=True)
 
     owner_id: Optional[int] = Field(default=None, foreign_key="user.id")
-    owner: Optional[User] = Relationship(back_populates="todos")

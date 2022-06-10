@@ -4,6 +4,17 @@ from typing import Optional
 from pydantic import BaseModel
 
 
+class SchemaTodo(BaseModel):
+    name: str
+    description: str
+    due_date: datetime
+
+    owner_id: int
+
+    class Config:
+        orm_mode = True
+
+
 class SchemaTodoUpdate(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
