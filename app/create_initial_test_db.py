@@ -1,6 +1,6 @@
 from sqlmodel import SQLModel, create_engine, Session
 
-from model import User, Todo
+from app.model import User, Todo
 import os
 
 # sqlite_file_name = "app/database.db"

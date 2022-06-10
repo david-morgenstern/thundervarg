@@ -1,16 +1,22 @@
 import os
 
+import sqlalchemy
 from fastapi import FastAPI, HTTPException
 from fastapi_sqlalchemy import DBSessionMiddleware, db
 
-from .model import Todo, User
-from .schema import SchemaUser, SchemaTodo, SchemaTodoUpdate
+from app.create_initial_test_db import engine, create_tables
+from app.model import Todo, User
+from app.schema import SchemaUser, SchemaTodo, SchemaTodoUpdate
 
 app = FastAPI()
 sql_url = os.getenv("DB_URL")
 
 # app.add_middleware(DBSessionMiddleware, db_url="sqlite:///database.db")
 app.add_middleware(DBSessionMiddleware, db_url=sql_url)
+
+
+if not sqlalchemy.inspect(engine).has_table('user'):
+    create_tables()
 
 
 @app.get("/users/")
