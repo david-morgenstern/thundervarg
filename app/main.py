@@ -11,7 +11,7 @@ from pydantic import BaseModel
 
 from app.create_initial_test_db import engine, create_tables
 from app.model import Todo, User
-from app.schema import SchemaUser, SchemaTodo, SchemaTodoUpdate
+from app.schema import SchemaTodoUpdate
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
@@ -141,8 +141,8 @@ def read_user(uid: int):
     return result
 
 
-@app.post("/users/", response_model=SchemaUser)
-def add_user(user: SchemaUser):
+@app.post("/users/", response_model=User)
+def add_user(user: User):
     with db.session as sess:
         sess.expire_on_commit = False
         new_user = User(name=user.name,  password=get_password_hash(user.password), disabled=user.disabled)
@@ -175,8 +175,8 @@ def get_todos_by_user(user_id: int):
     return todos
 
 
-@app.post("/todos/", response_model=SchemaTodo)
-def add_todo(todo: SchemaTodo):
+@app.post("/todos/", response_model=Todo)
+def add_todo(todo: Todo):
     with db.session as sess:
         sess.expire_on_commit = False
         new_todo = Todo(**todo.dict())
