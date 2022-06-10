@@ -27,6 +27,8 @@ class SchemaTodoUpdate(BaseModel):
 
 class SchemaUser(BaseModel):
     name: str
+    password: str
+    disabled: bool
 
     class Config:
         orm_mode = True

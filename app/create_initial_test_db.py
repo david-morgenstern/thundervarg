@@ -14,7 +14,7 @@ def create_tables():
 
 
 def create_user():
-    user1 = User(name="Davud")
+    user1 = User(name="Davud", password="admin", disabled=False)
     with Session(engine) as session:
         session.add(user1)
         session.commit()
