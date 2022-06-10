@@ -1,23 +1,43 @@
 import os
+from datetime import timedelta
 
 import sqlalchemy
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi.security import OAuth2PasswordRequestForm
 from fastapi_sqlalchemy import DBSessionMiddleware, db
 
+from app.authenticate import Token, authenticate_user, ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token, oauth2_scheme, \
+    get_password_hash
 from app.create_initial_test_db import engine, create_tables
 from app.model import Todo, User
-from app.schema import SchemaUser, SchemaTodo, SchemaTodoUpdate
+from app.schema import SchemaTodoUpdate
 
 app = FastAPI()
-sql_url = os.getenv("DB_URL")
 
 # env: TEST_DB=sqlite:///app/database.db
 # app.add_middleware(DBSessionMiddleware, db_url=os.getenv("TEST_DB"))
-app.add_middleware(DBSessionMiddleware, db_url=sql_url)
 
+sql_url = os.getenv("DB_URL")
+app.add_middleware(DBSessionMiddleware, db_url=sql_url)
 
 if not sqlalchemy.inspect(engine).has_table('user'):
     create_tables()
+
+
+@app.post("/token", response_model=Token)
+async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+    user = authenticate_user(form_data.username, form_data.password)
+
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.name}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
+
+@app.get("/private/")
+async def read_private(token: str = Depends(oauth2_scheme)):
+    return {"token": token}
 
 
 @app.get("/users/")
@@ -34,14 +54,14 @@ def read_user(uid: int):
     return result
 
 
-@app.post("/users/", response_model=SchemaUser)
-def add_user(user: SchemaUser):
+@app.post("/users/", response_model=User)
+def add_user(user: User):
     with db.session as sess:
         sess.expire_on_commit = False
-        new_user = User(name=user.name)
+        new_user = User(name=user.name, password=get_password_hash(user.password), disabled=user.disabled)
         sess.add(new_user)
         sess.commit()
-        return new_user
+    return new_user
 
 
 @app.get("/todos/")
@@ -68,8 +88,8 @@ def get_todos_by_user(user_id: int):
     return todos
 
 
-@app.post("/todos/", response_model=SchemaTodo)
-def add_todo(todo: SchemaTodo):
+@app.post("/todos/", response_model=Todo)
+def add_todo(todo: Todo):
     with db.session as sess:
         sess.expire_on_commit = False
         new_todo = Todo(**todo.dict())
