@@ -3,8 +3,7 @@ from sqlmodel import SQLModel, create_engine, Session
 from app.model import User, Todo
 import os
 
-# sqlite_file_name = "app/database.db"
-# sql_url = f"sqlite:///{sqlite_file_name}"
+# sql_url = f"sqlite:///app/database.db"
 sql_url = os.getenv("DB_URL")
 
 engine = create_engine(sql_url, echo=True)

@@ -11,7 +11,8 @@ from app.schema import SchemaUser, SchemaTodo, SchemaTodoUpdate
 app = FastAPI()
 sql_url = os.getenv("DB_URL")
 
-# app.add_middleware(DBSessionMiddleware, db_url="sqlite:///database.db")
+# env: TEST_DB=sqlite:///app/database.db
+# app.add_middleware(DBSessionMiddleware, db_url=os.getenv("TEST_DB"))
 app.add_middleware(DBSessionMiddleware, db_url=sql_url)
 
 
