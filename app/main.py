@@ -3,15 +3,14 @@ import os
 from fastapi import FastAPI, HTTPException
 from fastapi_sqlalchemy import DBSessionMiddleware, db
 
-from model import Todo, User
-from schema import SchemaUser, SchemaTodo, SchemaTodoUpdate
+from .model import Todo, User
+from .schema import SchemaUser, SchemaTodo, SchemaTodoUpdate
 
 app = FastAPI()
 sql_url = f"postgresql://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}@db:5432/{os.getenv('POSTGRES_DB')}"
 
 # app.add_middleware(DBSessionMiddleware, db_url="sqlite:///database.db")
 app.add_middleware(DBSessionMiddleware, db_url=sql_url)
-
 
 @app.get("/users/")
 def read_users():
