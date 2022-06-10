@@ -50,8 +50,13 @@ def get_user(username: str) -> User:
 
 def authenticate_user(username: str, password: str):
     user = get_user(username)
+
     if not verify_password(password, user.password):
-        return False
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     return user
 
 
