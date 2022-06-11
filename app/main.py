@@ -8,6 +8,9 @@ from app.routers import users, todos
 from app.authenticate import oauth2_scheme, router as auth_router
 from app.create_initial_test_db import engine, create_tables
 
+if not sqlalchemy.inspect(engine).has_table('user'):
+    create_tables()
+
 app = FastAPI()
 app.include_router(users.router)
 app.include_router(todos.router)
@@ -19,8 +22,7 @@ app.include_router(auth_router)
 sql_url = os.getenv("DB_URL")
 app.add_middleware(DBSessionMiddleware, db_url=sql_url)
 
-if not sqlalchemy.inspect(engine).has_table('user'):
-    create_tables()
+
 
 
 @app.get("/")
