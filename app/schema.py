@@ -4,6 +4,15 @@ from typing import Optional
 from pydantic import BaseModel
 
 
+class SchemaUser(BaseModel):
+    name: str
+    password: str
+    disabled: bool = False
+
+    class Config:
+        orm_mode = True
+
+
 class SchemaTodo(BaseModel):
     name: str
     description: str
@@ -22,3 +31,6 @@ class SchemaTodoUpdate(BaseModel):
     due_date: Optional[datetime] = None
 
     owner_id: Optional[int] = None
+
+    class Config:
+        orm_mode = True
