@@ -1,7 +1,8 @@
+import os
+
 from sqlmodel import SQLModel, create_engine, Session
 
 from app.model import User, Todo
-import os
 
 # sql_url = f"sqlite:///app/database.db"
 sql_url = os.getenv("DB_URL")
